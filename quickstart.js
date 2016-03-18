@@ -105,8 +105,8 @@ function listEvents(auth) {
     calendar.events.list({
 	    auth: auth,
 		calendarId: 'primary',
-		timeMin: (new Date()).toISOString(),
-		maxResults: 10,
+		timeMin: (new Date(new Date().setHours(0,0,0,0)).toISOString()),
+		timeMax: (new Date(new Date().setHours(24,0,0,0)).toISOString()),
 		singleEvents: true,
 		orderBy: 'startTime'
 		}, function(err, response) {
@@ -122,7 +122,12 @@ function listEvents(auth) {
 		for (var i = 0; i < events.length; i++) {
 		    var event = events[i];
 		    var start = event.start.dateTime || event.start.date;
-		    console.log('%s - %s', start, event.summary);
+		    var end = event.end.dateTime || event.end.date;
+		    var diff = (new Date(end)) - (new Date(start));
+		    var minutes_diff = Math.floor ((diff / 1000)/60);
+		    if (minutes_diff < 1440) {
+			console.log('%s - %s ', start, event.summary, minutes_diff);
+		    }
 		}
 	    }
 	});
